@@ -37,7 +37,8 @@ def init_get_html_page(start_date, weeks_numbers):
     
     #Generate and get every url to request
     url_set = create_every_url(start_date, weeks_numbers)
-    for url in url_set:
+    for url in url_set[0:2]:
+        print(url)
         parser(url[1],url[0]) #parser(https://.... , 2022-xx-xx)
 
 def create_every_url(start_date, weeks_numbers):
@@ -54,19 +55,21 @@ def create_every_url(start_date, weeks_numbers):
         url = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{}/futures/deacmesf{}.htm".format(str(date.strftime("%y")),str(date.strftime("%m%d%y")))
         url_list.append((date,url))
 
+        #Date incrementation by 7 days (each tuesday)
         date = date + timedelta(days=7)
         
-
     return url_list
 
-def parser(file,date):
+def parser(url,date):
     ''' Parse html file
 
     '''
     new_date  = date.strftime("%d/%m/%y")
-    print(new_date)
-    with open(file) as f:
-        soup = BeautifulSoup(f,"html.parser")
+    html_response = request_url(url)
+
+    #If html response if not None
+    if html_response:
+        soup = BeautifulSoup(html_response,"html.parser")
         body = soup.body.get_text()
 
         lines = body.splitlines()
@@ -110,8 +113,7 @@ def write_csv(name, data):
 
 
 def main():
-    #init_get_html_page(date(2021,1,5), 90)
-    print(request_url("https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2022/futures/deacmesf091322.htm"))
+    init_get_html_page(date(2021,1,5), 90)
     #parser('cot.html', date(2021,9,6))
 
 
