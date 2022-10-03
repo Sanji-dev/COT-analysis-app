@@ -7,20 +7,13 @@ import pandas as pd
 
 
 # --- GLOBAL --- #
-"""
+'''
 URL USD   --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2022/futures/deanybtsf010521.htm
 URL OTHER --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2022/futures/deacmesf091322.htm
 Attention, deux éléments changent dans l'URL en fonction du fichier : L'année (2022) et la date (091322).
-Par conséquent, l'URL est traitée en 4 parties.
-"""
+'''
 
-# url for all forex money except USD
-START_URL_OTHER, END_URL_OTHER = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20", "/futures/deacmesf"
 
-# url for USD
-START_URL_USD, END_URL_USD = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20", "/futures/deanybtsf"
-
-# ID by money
 OTHER_ID = [('EUR','Code-099741'),
             ('JPY','Code-097741'),
             ('AUD','Code-232741'),
@@ -33,21 +26,45 @@ USD_ID = ('USD','Code-098662')
 
 # ------ #
 
-def init_get_html_page(url, start_date, weeks_numbers):
-    create_every_url(url, start_date, weeks_numbers)
+def init_get_html_page(start_date, weeks_numbers):
+    '''     Populate csv files with commitment of traders datas after requesting cftc.gov website
 
+    Args:   start_date (date):  first date to request
+            weeks_numbers(int): weeks numbers to incremente from start_date
 
-def create_every_url(url, start_date, weeks_numbers):
+    Return: (int):    status code
+    '''
+    
+    url_set = create_every_url(start_date, weeks_numbers)
+    for url in url_set:
+        #parser(url,)
+        print(url[0], url[1])
+
+def create_every_url(start_date, weeks_numbers):
+    ''' Generate every url for each date (tuesday) based on url param
+
+    Args:   start_date (date):  first date to request
+            weeks_numbers(int): weeks numbers to incremente from start_date
+
+    Return: (list): List of url for each date
+    '''
     date = start_date
+    url_list = list()
     for i in range(weeks_numbers):
+        url = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{}/futures/deacmesf{}.htm".format(str(date.strftime("%y")),str(date.strftime("%m%d%y")))
+        url_list.append((date,url))
 
-        specific_url = url + str(date.strftime("%m%d%y")) + ".htm"
-        print(specific_url)
         date = date + timedelta(days=7)
+        
+
+    return url_list
 
 def parser(file,date):
+    ''' Parse html file
+
+    '''
     new_date  = date.strftime("%d/%m/%y")
-    print(d)
+    print(new_date)
     with open(file) as f:
         soup = BeautifulSoup(f,"html.parser")
         body = soup.body.get_text()
@@ -63,8 +80,10 @@ def parser(file,date):
                     cloture_long = lines[idx+12].split()[0]
                     cloture_short = lines[idx+12].split()[1]
 
-                    net_position = long - short
-                    
+                    long_formatted = int(long.replace(",",""))
+                    short_formatted = int(short.replace(",",""))
+                    net_position = "{:,}".format(long_formatted - short_formatted)
+
                     dico = {
                         'Date':new_date,
                         'Long': long,
@@ -80,8 +99,8 @@ def write_csv(name, data):
     print(name.lower(), data)
 
 def main():
-    #init_get_html_page(URL, date(2021,1,5), 90)
-    parser('cot.html', date(2021,9,6))
+    init_get_html_page(date(2021,1,5), 90)
+    #parser('cot.html', date(2021,9,6))
 
 
 
