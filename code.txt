@@ -1,0 +1,13 @@
+if commitments != 0:
+                commitments-=1
+                if commitments == 0:
+                    long = words[0]
+                    short = words[1]
+                    print("Long:{}  Short:{}".format(long,short))
+
+            if changes != 0:
+                changes-=1
+                if changes == 0:
+                    changes_long = words[0]
+                    changes_short = words[1]
+                    print("Cloture long:{}  Cloture short:{}".format(changes_long,changes_short))
