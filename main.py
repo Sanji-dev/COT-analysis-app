@@ -4,7 +4,7 @@ from datetime import date, timedelta
 import pandas as pd
 from time import sleep
 from random import randint
-
+from tqdm import tqdm
 
 
 # --- GLOBAL --- #
@@ -40,10 +40,9 @@ def init_get_html_page(start_date, weeks_numbers):
     
     #Generate and get every url to request
     url_set = create_every_url(start_date, weeks_numbers)
-    for url in url_set[0:2]:
-        print(url)
+    for url in tqdm(url_set[0:4]):
         parser(url[1],url[0]) #parser(https://.... , 2022-xx-xx)
-        sleep(randint(1,4))
+        sleep(randint(2,4))
 
 def create_every_url(start_date, weeks_numbers):
     ''' Generate every url for each date (tuesday) based on url param
