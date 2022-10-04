@@ -2,7 +2,8 @@ from bs4 import BeautifulSoup
 import requests
 from datetime import date, timedelta
 import pandas as pd
-
+from time import sleep
+from random import randint
 
 
 
@@ -14,15 +15,17 @@ Attention, deux éléments changent dans l'URL en fonction du fichier : L'année
 '''
 
 #ID by money
-OTHER_ID = [('EUR','Code-099741'),
-            ('JPY','Code-097741'),
-            ('AUD','Code-232741'),
-            ('NZD','Code-112741'),
-            ('CAD','Code-090741'),
-            ('GBP','Code-096742'),
-            ('CHF','Code-092741'),
-            ]
-USD_ID = ('USD','Code-098662')
+major_fx = [
+            ['EUR','Code-099741',[]], #Money , Code, List of COT values
+            ['JPY','Code-097741',[]],
+            ['AUD','Code-232741',[]],
+            ['NZD','Code-112741',[]],
+            ['CAD','Code-090741',[]],
+            ['GBP','Code-096742',[]],
+            ['CHF','Code-092741',[]],
+]
+
+USD_ID = ('USD','Code-098662',[])
 
 # --- FUNCTIONS --- #
 
@@ -40,6 +43,7 @@ def init_get_html_page(start_date, weeks_numbers):
     for url in url_set[0:2]:
         print(url)
         parser(url[1],url[0]) #parser(https://.... , 2022-xx-xx)
+        sleep(randint(1,4))
 
 def create_every_url(start_date, weeks_numbers):
     ''' Generate every url for each date (tuesday) based on url param
@@ -61,9 +65,14 @@ def create_every_url(start_date, weeks_numbers):
     return url_list
 
 def parser(url,date):
-    ''' Parse html file
+    ''' Parse html file from specific URL after requesting it.
 
+    Args:   url(string): Url to request to
+            date(date): the date we want to get COT datas from
+    
+    Return: (int): Status code
     '''
+
     new_date  = date.strftime("%d/%m/%y")
     html_response = request_url(url)
 
@@ -75,7 +84,7 @@ def parser(url,date):
         lines = body.splitlines()
         for idx, item in enumerate(lines):
             words = item.split()
-            for money in OTHER_ID:
+            for money in major_fx:
                 if money[1] in words:
                     long = lines[idx+9].split()[0]
                     short = lines[idx+9].split()[1]
@@ -96,16 +105,18 @@ def parser(url,date):
                         'Net position': net_position,
                     }
                     
-                    write_csv(money[0]+".csv", dico)
+                    money[2].append(dico)
+                    #write_csv(money[0]+".csv", dico)
 
 def request_url(url):
     try:
         html_response = requests.get(url)
         if html_response.status_code == 200:
             return html_response.content
+        return None
     except requests.exceptions.RequestException as e: 
         print(f'save failed: unable to get page content: {e}')
-    return None
+        return None
 
 
 def write_csv(name, data):
@@ -115,6 +126,8 @@ def write_csv(name, data):
 def main():
     init_get_html_page(date(2021,1,5), 90)
     #parser('cot.html', date(2021,9,6))
+    for m in major_fx:
+        print(m)
 
 
 
