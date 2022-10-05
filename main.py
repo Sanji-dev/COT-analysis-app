@@ -75,7 +75,7 @@ def parser(url,date):
     new_date  = date.strftime("%d/%m/%y")
     html_response = request_url(url)
 
-    #If html response if not None
+    #If html response is not None
     if html_response:
         soup = BeautifulSoup(html_response,"html.parser")
         body = soup.body.get_text()
