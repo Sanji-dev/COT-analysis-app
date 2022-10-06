@@ -29,7 +29,7 @@ USD_ID = ('USD','Code-098662',[])
 
 # --- FUNCTIONS --- #
 
-def init_get_html_page(start_date, weeks_numbers):
+def init_csv_files_from_html(start_date, weeks_numbers):
     '''     Populate csv files with commitment of traders datas after requesting cftc.gov website
 
     Args:   start_date (date):  first date to request
@@ -40,9 +40,20 @@ def init_get_html_page(start_date, weeks_numbers):
     
     #Generate and get every url to request
     url_set = create_every_url(start_date, weeks_numbers)
-    for url in tqdm(url_set[0:4]):
+
+    #Request every url (every tuesday)
+    for url in url_set[0:2]:
         parser(url[1],url[0]) #parser(https://.... , 2022-xx-xx)
-        sleep(randint(2,4))
+        sleep(randint(1,3))
+
+    
+    
+    eur_data = major_fx[0][2]
+    eur_data.reverse()
+    df = pd.DataFrame(eur_data)
+    df.to_csv("csv_folder/eur.csv", index=False)
+    print(df,"\n")
+    
 
 def create_every_url(start_date, weeks_numbers):
     ''' Generate every url for each date (tuesday) based on url param
@@ -52,6 +63,7 @@ def create_every_url(start_date, weeks_numbers):
 
     Return: (list): List of url for each date
     '''
+
     date = start_date
     url_list = list()
     for i in range(weeks_numbers):
@@ -73,7 +85,7 @@ def parser(url,date):
     '''
 
     new_date  = date.strftime("%d/%m/%y")
-    html_response = request_url(url)
+    html_response = get_request_url(url)
 
     #If html response is not None
     if html_response:
@@ -107,7 +119,7 @@ def parser(url,date):
                     money[2].append(dico)
                     #write_csv(money[0]+".csv", dico)
 
-def request_url(url):
+def get_request_url(url):
     try:
         html_response = requests.get(url)
         if html_response.status_code == 200:
@@ -123,10 +135,10 @@ def write_csv(name, data):
 
 
 def main():
-    init_get_html_page(date(2021,1,5), 90)
+    init_csv_files_from_html(date(2021,1,5), 90)
     #parser('cot.html', date(2021,9,6))
-    for m in major_fx:
-        print(m)
+    #for m in major_fx:
+    #    print(m)
 
 
 
