@@ -46,12 +46,13 @@ def init_csv_files_from_html(start_date, weeks_numbers):
         parser(url[1],url[0]) #parser(https://.... , 2022-xx-xx)
         sleep(randint(1,3))
 
-    
-    
-    eur_data = major_fx[0][2]
-    eur_data.reverse()
-    df = pd.DataFrame(eur_data)
-    df.to_csv("csv_folder/eur.csv", index=False)
+    for money in major_fx:
+        dataframe_to_csv(money[0].lower(), money[2])
+
+def dataframe_to_csv(money, data):
+    data.reverse()
+    df = pd.DataFrame(data)
+    df.to_csv(f"csv_folder/{money}.csv", index=False)
     print(df,"\n")
     
 
