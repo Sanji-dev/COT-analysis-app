@@ -42,9 +42,9 @@ def init_csv_files_from_html(start_date, weeks_numbers):
     url_set = create_every_url(start_date, weeks_numbers)
 
     #Request every url (every tuesday)
-    for url in url_set[0:2]:
+    for url in tqdm(url_set[0:20]):
         parser(url[1],url[0]) #parser(https://.... , 2022-xx-xx)
-        sleep(randint(1,3))
+        #sleep(randint(1,3))
 
     for money in major_fx:
         dataframe_to_csv(money[0].lower(), money[2])
@@ -118,7 +118,6 @@ def parser(url,date):
                     }
                     
                     money[2].append(dico)
-                    #write_csv(money[0]+".csv", dico)
 
 def get_request_url(url):
     try:
@@ -131,17 +130,12 @@ def get_request_url(url):
         return None
 
 
-def write_csv(name, data):
-    print(name.lower(), data)
-
 
 def main():
     init_csv_files_from_html(date(2021,1,5), 90)
     #parser('cot.html', date(2021,9,6))
     #for m in major_fx:
     #    print(m)
-
-
 
 if __name__ == "__main__":
     main()
