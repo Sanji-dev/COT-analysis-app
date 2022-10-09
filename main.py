@@ -6,7 +6,6 @@ from time import sleep
 from random import randint
 from tqdm import tqdm
 
-
 # --- GLOBAL --- #
 '''
 URL USD   --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2022/futures/deanybtsf010521.htm
@@ -42,17 +41,23 @@ def init_csv_files_from_html(start_date, weeks_numbers):
     url_set = create_every_url(start_date, weeks_numbers)
 
     #Request every url (every tuesday)
-    for url in tqdm(url_set[0:20]):
+    for url in tqdm(url_set):
         parser(url[1],url[0]) #parser(https://.... , 2022-xx-xx)
-        #sleep(randint(1,3))
+        #print("{} added".format(url[0].strftime("%d/%m/%y")))
+        sleep(randint(1,3))
+
 
     for money in major_fx:
         dataframe_to_csv(money[0].lower(), money[2])
 
 def dataframe_to_csv(money, data):
+    #Reverse to get latest at the top
     data.reverse()
     df = pd.DataFrame(data)
+
+    #Write Symbols DataFrames in csv 
     df.to_csv(f"csv_folder/{money}.csv", index=False)
+    print(f"##-- {money.upper()} --##")
     print(df,"\n")
     
 
@@ -73,8 +78,8 @@ def create_every_url(start_date, weeks_numbers):
 
         #Date incrementation by 7 days (each tuesday)
         date = date + timedelta(days=7)
-        
-    return url_list
+    
+    return(url_list)
 
 def parser(url,date):
     ''' Parse html file from specific URL after requesting it.
@@ -132,7 +137,8 @@ def get_request_url(url):
 
 
 def main():
-    init_csv_files_from_html(date(2021,1,5), 90)
+    init_csv_files_from_html(date(2021,1,5), 92)
+    #create_every_url(date(2021,1,5), 92)
     #parser('cot.html', date(2021,9,6))
     #for m in major_fx:
     #    print(m)
