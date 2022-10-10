@@ -15,7 +15,7 @@ Attention, deux éléments changent dans l'URL en fonction du fichier : L'année
 
 #ID by money
 
-RUN = False
+RUN = True
 major_fx = [
             ['EUR','Code-099741',[]], #Money , Code, List of COT values
             ['JPY','Code-097741',[]],
@@ -105,15 +105,15 @@ def parser(url,date):
             words = item.split()
             for money in major_fx:
                 if money[1] in words:
-                    long = lines[idx+9].split()[0]
-                    short = lines[idx+9].split()[1]
+                    long = int(lines[idx+9].split()[0].replace(",",""))
+                    short = int(lines[idx+9].split()[1].replace(",",""))
 
-                    cloture_long = lines[idx+12].split()[0]
-                    cloture_short = lines[idx+12].split()[1]
+                    cloture_long = int(lines[idx+12].split()[0].replace(",",""))
+                    cloture_short = int(lines[idx+12].split()[1].replace(",",""))
 
-                    long_formatted = int(long.replace(",",""))
-                    short_formatted = int(short.replace(",",""))
-                    net_position = "{:,}".format(long_formatted - short_formatted)
+                    
+                    net_position = long - short
+                    print(net_position)
 
                     dico = {
                         'Date':new_date,

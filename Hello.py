@@ -25,8 +25,13 @@ option = st.selectbox(
      major_fx)
 
 st.subheader(f"Rapports pour **{option}**")
+
+#Lis le fichier CSV en fonction de la devise sélectionnée
 df = pd.read_csv(f"csv_folder/{option.lower()}.csv", index_col='Date')
-st.dataframe(df, use_container_width=True)
+print("ok")
+#df.style.background_gradient(axis=0)
+
+st.dataframe(df.style.background_gradient(axis=0), use_container_width=True)
 
 @st.cache
 def convert_df(df):
