@@ -12,8 +12,10 @@ st.title("Commitments of traders - Datas 📊")
 st.markdown(
     """
     Cette application a pour objectif de faciliter l'analyse des rapports "Commitments of traders", issues du site [cftc.gov](https://www.cftc.gov/).
-    Les données récupérées sont des contrats à terme non commerciaux, tels que les devises forex majeures essentiellement.  
-    💵 💴 💶 💷   
+    Les données récupérées sont des contrats à terme non commerciaux, tels que les devises forex majeures essentiellement.
+    💵 💴 💶 💷  
+
+    La finalité est de déduire **l'Orderflow de la Smart Money** de manière la plus probable en fonction de nos analyses.
 """
 )
 
@@ -33,9 +35,10 @@ def convert_df(df):
 
 csv = convert_df(df)
 
+date = df.index[0].replace("/","-")
 st.download_button(
-    label="Download data as CSV",
+    label="Exporter le CSV",
     data=csv,
-    file_name='large_df.csv',
+    file_name=f'{option}_{date}.csv',
     mime='text/csv',
 )
