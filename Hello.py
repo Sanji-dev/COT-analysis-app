@@ -1,29 +1,41 @@
 import streamlit as st
+import pandas as pd
+
+major_fx = ['EUR','JPY','AUD','NZD','CAD','GBP','CHF']
 
 st.set_page_config(
-    page_title="Hello",
-    page_icon="👋",
+    page_title="COT Datas",
+    page_icon="📊",
 )
 
-st.write("# Welcome to Streamlit! 👋")
-
-st.sidebar.success("Select a demo above.")
-
+st.title("Commitments of traders - Datas 📊")
 st.markdown(
     """
-    Streamlit is an open-source app framework built specifically for
-    Machine Learning and Data Science projects.
-    **👈 Select a demo from the sidebar** to see some examples
-    of what Streamlit can do!
-    ### Want to learn more?
-    - Check out [streamlit.io](https://streamlit.io)
-    - Jump into our [documentation](https://docs.streamlit.io)
-    - Ask a question in our [community
-        forums](https://discuss.streamlit.io)
-    ### See more complex demos
-    - Use a neural net to [analyze the Udacity Self-driving Car Image
-        Dataset](https://github.com/streamlit/demo-self-driving)
-    - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
+    Cette application a pour objectif de faciliter l'analyse des rapports "Commitments of traders", issues du site [cftc.gov](https://www.cftc.gov/).
+    Les données récupérées sont des contrats à terme non commerciaux, tels que les devises forex majeures essentiellement.  
+    💵 💴 💶 💷   
 """
 )
 
+st.header("Tableaux de données par devise")
+option = st.selectbox(
+    'Quelle devise voulez-vous ?',
+     major_fx)
+
+st.subheader(f"Rapports pour **{option}**")
+df = pd.read_csv(f"csv_folder/{option.lower()}.csv", index_col='Date')
+st.dataframe(df, use_container_width=True)
+
+@st.cache
+def convert_df(df):
+    # IMPORTANT: Cache the conversion to prevent computation on every rerun
+    return df.to_csv().encode('utf-8')
+
+csv = convert_df(df)
+
+st.download_button(
+    label="Download data as CSV",
+    data=csv,
+    file_name='large_df.csv',
+    mime='text/csv',
+)

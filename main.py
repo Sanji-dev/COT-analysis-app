@@ -14,6 +14,8 @@ Attention, deux éléments changent dans l'URL en fonction du fichier : L'année
 '''
 
 #ID by money
+
+RUN = False
 major_fx = [
             ['EUR','Code-099741',[]], #Money , Code, List of COT values
             ['JPY','Code-097741',[]],
@@ -137,11 +139,12 @@ def get_request_url(url):
 
 
 def main():
-    init_csv_files_from_html(date(2021,1,5), 92)
-    #create_every_url(date(2021,1,5), 92)
-    #parser('cot.html', date(2021,9,6))
-    #for m in major_fx:
-    #    print(m)
+    if RUN:
+        init_csv_files_from_html(date(2021,1,5), 92)
+        #create_every_url(date(2021,1,5), 92)
+        #parser('cot.html', date(2021,9,6))
+        #for m in major_fx:
+        #    print(m)
 
 if __name__ == "__main__":
     main()
