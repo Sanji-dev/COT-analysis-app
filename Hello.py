@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from datetime import date
 
 major_fx = ['EUR','JPY','AUD','NZD','CAD','GBP','CHF']
 
@@ -28,11 +29,11 @@ st.subheader(f"Rapports pour **{option}**")
 
 #Lis le fichier CSV en fonction de la devise sélectionnée
 df = pd.read_csv(f"csv_folder/{option.lower()}.csv", index_col='Date')
-print("ok")
-#df.style.background_gradient(axis=0)
+dates = list(df.index)
+start = st.select_slider("Date de début", options = dates, value=(dates[-1]))
+st.write("Début:", dates.index(start))
 
-st.dataframe(df.style.background_gradient(axis=0), use_container_width=True)
-
+st.table(df.head(dates.index(start)+1).style.background_gradient(axis=0))
 @st.cache
 def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
@@ -47,3 +48,4 @@ st.download_button(
     file_name=f'{option}_{date}.csv',
     mime='text/csv',
 )
+
