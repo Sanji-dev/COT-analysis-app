@@ -1,2 +1,0 @@
-- Range date selector => Affiche en même temps COT et courbe tradingview
-- Search symbol input -> Genere tableau + button extract csv
