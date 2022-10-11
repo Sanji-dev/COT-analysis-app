@@ -5,7 +5,7 @@ from datetime import date
 major_fx = ['EUR','JPY','AUD','NZD','CAD','GBP','CHF']
 
 st.set_page_config(
-    page_title="COT Datas",
+    page_title="Rapports COT",
     page_icon="📊",
 )
 
@@ -30,8 +30,12 @@ st.subheader(f"Rapports pour **{option}**")
 #Lis le fichier CSV en fonction de la devise sélectionnée
 df = pd.read_csv(f"csv_folder/{option.lower()}.csv", index_col='Date')
 dates = list(df.index)
-start = st.select_slider("Date de début", options = dates, value=(dates[-1]))
-st.write("Début:", dates.index(start))
+
+#Input slider pour filter la date range
+
+start = st.select_slider("Sélectionner la date de début", options = dates, value=("04/01/22"))
+
+st.caption("Etudes sur **{}** semaines".format(dates.index(start)+1))
 
 st.table(df.head(dates.index(start)+1).style.background_gradient(axis=0))
 @st.cache
