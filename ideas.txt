@@ -1,0 +1,14 @@
+-Ajouter le pourcentage par rapport en fonction du rapport d'avant
+    ->Comparer les pourcentages entres chaques money pour en tirer les meilleurs paires => Metrics
+-Backtest: Comparer les valeurs weeklys des meilleurs paire (de chaques semaines) pour voir s'il y a effectivement un changement significatif
+    Si pourcentages > 500% (par exemple, input cursor), est ce que la bougie weekly qui suit réagit fortement ? => études sur plusieurs paires
+-Utiliser style.bar pour afficher clotures.
+-Supprimer deux premières colonnes
+-Modifier code couleurs ?
+
+-Date range qui affiche à la fois le tableau de valeur et un graphique à côté
+
+-Input pour récupérer les données voulues
+
+-Comparer deux paires ( tableaux s'affiche en même temps)
+

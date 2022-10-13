@@ -153,4 +153,4 @@ cython_debug/
 
 #Specific files
 test.py
-ideas.txt
+#ideas.txt
