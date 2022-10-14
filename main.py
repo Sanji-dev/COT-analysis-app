@@ -119,8 +119,8 @@ def parser(url,date):
                         'Date':new_date,
                         'Long': long,
                         'Short': short,
-                        'Cloture long':cloture_long,
-                        'Cloture short':cloture_short,
+                        'Change long':cloture_long,
+                        'Change short':cloture_short,
                         'Net position': net_position,
                     }
                     
@@ -140,7 +140,7 @@ def get_request_url(url):
 
 def main():
     if RUN:
-        init_csv_files_from_html(date(2021,1,5), 92)
+        init_csv_files_from_html(date(2021,1,5), 93)
         #create_every_url(date(2021,1,5), 92)
         #parser('cot.html', date(2021,9,6))
         #for m in major_fx:
