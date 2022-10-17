@@ -52,6 +52,11 @@ st.markdown(
 """
 )
 
+@st.cache
+def csv_to_dataframe(file, index):
+    return pd.read_csv(file, index_col=index)
+
+
 st.header("Tableaux de données par devise")
 
 #Liste de tous les actifs
@@ -69,9 +74,11 @@ st.subheader(f"Rapports pour **{option}**")
 
 index = choices_asset.index(option)
 #Lis le fichier CSV en fonction de la devise sélectionnée
-df = pd.read_csv(f"csv_folder\\{ALL_ASSET[index][3]}\\{option.lower()}.csv", index_col='Date')
-dates = list(df.index)
+df = csv_to_dataframe(f"csv_folder\\{ALL_ASSET[index][3]}\\{option.lower()}.csv",'Date')
 
+
+dates = list(df.index)
+print(dates)
 #Input slider pour filter la date range
 
 start = st.select_slider("Sélectionner la date de début", options = dates, value=("04/01/22"))
