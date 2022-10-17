@@ -8,15 +8,17 @@ from tqdm import tqdm
 
 # --- GLOBAL --- #
 '''
-URL USD   --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2022/futures/deanybtsf010521.htm
-URL OTHER --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2022/futures/deacmesf091322.htm
+ICE Futures US (USD)         --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2022/futures/deanybtsf010521.htm
+Chicago Mercantile Exchange  --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2022/futures/deacmesf091322.htm
+New York Mercantile Exchange --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2021/futures/deanymesf010521.htm
+Commodity Exchange           --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2021/futures/deacmxsf010521.htm
 Attention, deux éléments changent dans l'URL en fonction du fichier : L'année (2022) et la date (091322).
 '''
 
-#ID by money
+#Currencies by report
 
-RUN = True
-major_fx = [
+RUN = False
+CHICAGO = [
             ['EUR','Code-099741',[]], #Money , Code, List of COT values
             ['JPY','Code-097741',[]],
             ['AUD','Code-232741',[]],
@@ -24,9 +26,28 @@ major_fx = [
             ['CAD','Code-090741',[]],
             ['GBP','Code-096742',[]],
             ['CHF','Code-092741',[]],
+            ['MXN','Code-095741',[]],
+            ['BRL','Code-102741',[]],
+            ['ZAR','Code-122741',[]],
+            ['BTC','Code-133741',[]],
+            ['ETH','Code-146021',[]],
+            ['NASDAQ-100','Code-209742',[]],
+            ['S&P 500','Code-209742',[]],
 ]
 
-USD_ID = ('USD','Code-098662',[])
+USD = ['USD','Code-098662',[]]
+
+NEW_YORK = [
+            ['OIL','Code-067651',[]],
+            ['GAS','Code-023651',[]],
+]
+
+COMMODITY = [
+            ['SILVER','Code-084691',[]],
+            ['COPPER','Code-085692',[]],
+            ['GOLD','Code-088691',[]],
+    
+]
 
 # --- FUNCTIONS --- #
 
