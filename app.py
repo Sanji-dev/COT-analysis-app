@@ -53,41 +53,59 @@ st.markdown(
 )
 
 @st.cache
-def csv_to_dataframe(file, index):
+def csv_to_dataframe(file, index="Date"):
     return pd.read_csv(file, index_col=index)
 
 
 st.header("Tableaux de données par devise")
 
-#Liste de tous les actifs
+#Liste de tous les actifs par leur nom
 choices_asset = [item[0] for item in ALL_ASSET]
 
+#Récupère l'index de l'USD dans la liste pour l'afficher par défaut dans la selectbox
 for i,choice in enumerate(choices_asset):
     if choice == 'USD':
         usd_index = i
 
-option = st.selectbox(
-    'Quel actif voulez-vous ?', choices_asset, index=usd_index
-     )
-
-st.subheader(f"Rapports pour **{option}**")
-
-index = choices_asset.index(option)
-#Lis le fichier CSV en fonction de la devise sélectionnée
-df = csv_to_dataframe(f"csv_folder\\{ALL_ASSET[index][3]}\\{option.lower()}.csv",'Date')
-
-
+df = csv_to_dataframe("csv_folder\\forex\\usd.csv")
+#Liste de toutes les dates
 dates = list(df.index)
-print(dates)
-#Input slider pour filter la date range
 
+#Input slider pour filter la date range
 start = st.select_slider("Sélectionner la date de début", options = dates, value=("04/01/22"))
 
 st.caption("Etudes sur **{}** semaines".format(dates.index(start)+1))
-st.table(df.drop(['url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0))
+
+col1, col2 = st.columns(2)
+
+with col1:
+    option = st.selectbox(
+    'Premier actif ?', choices_asset, index=usd_index
+     )
+    st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
+
+    index = choices_asset.index(option)
+
+    #Lis le fichier CSV en fonction de l'actif sélectionné
+    df = csv_to_dataframe(f"csv_folder\\{ALL_ASSET[index][3]}\\{option.lower()}.csv",'Date')
+
+    st.table(df.drop(['url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0))
+
+with col2:
+    option = st.selectbox(
+    'Second actif ?', choices_asset
+     )
+    st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
+
+    index = choices_asset.index(option)
+
+    #Lis le fichier CSV en fonction de l'actif sélectionné
+    df = csv_to_dataframe(f"csv_folder\\{ALL_ASSET[index][3]}\\{option.lower()}.csv",'Date')
+
+    st.table(df.drop(['url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0))
+
 @st.cache
 def convert_df(df):
-    # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
 
 csv = convert_df(df)

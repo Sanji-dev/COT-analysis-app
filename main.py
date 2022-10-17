@@ -66,7 +66,7 @@ def init_csv_files_from_html(start_date, weeks_numbers):
     url_set = create_every_url(start_date, weeks_numbers)
 
     #Request every url (every tuesday)
-    for url in tqdm(url_set[0:8]):
+    for url in tqdm(url_set):
         parser(url[1],url[0]) #parser(https://.... , 2022-xx-xx)
         
         sleep(randint(1,3))
