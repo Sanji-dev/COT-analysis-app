@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 # --- GLOBAL --- #
 '''
-ICE Futures US (USD)         --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2022/futures/deanybtsf010521.htm
+ICE Futures US (USD)         --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2021/futures/deanybtsf010521.htm
 Chicago Mercantile Exchange  --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2022/futures/deacmesf091322.htm
 New York Mercantile Exchange --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2021/futures/deanymesf010521.htm
 Commodity Exchange           --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2021/futures/deacmxsf010521.htm
@@ -17,38 +17,40 @@ Attention, deux éléments changent dans l'URL en fonction du fichier : L'année
 
 #Currencies by report
 
-RUN = False
+RUN = True
 CHICAGO = [
-            ['EUR','Code-099741',[]], #Money , Code, List of COT values
-            ['JPY','Code-097741',[]],
-            ['AUD','Code-232741',[]],
-            ['NZD','Code-112741',[]],
-            ['CAD','Code-090741',[]],
-            ['GBP','Code-096742',[]],
-            ['CHF','Code-092741',[]],
-            ['MXN','Code-095741',[]],
-            ['BRL','Code-102741',[]],
-            ['ZAR','Code-122741',[]],
-            ['BTC','Code-133741',[]],
-            ['ETH','Code-146021',[]],
-            ['NASDAQ-100','Code-209742',[]],
-            ['S&P 500','Code-209742',[]],
+            ['EUR','Code-099741','deacmesf','forex',[]], #Asset , Code, End_url, Type(folder), List of value
+            ['JPY','Code-097741','deacmesf','forex',[]],
+            ['AUD','Code-232741','deacmesf','forex',[]],
+            ['NZD','Code-112741','deacmesf','forex',[]],
+            ['CAD','Code-090741','deacmesf','forex',[]],
+            ['GBP','Code-096742','deacmesf','forex',[]],
+            ['CHF','Code-092741','deacmesf','forex',[]],
+            ['MXN','Code-095741','deacmesf','forex',[]],
+            ['BRL','Code-102741','deacmesf','forex',[]],
+            ['ZAR','Code-122741','deacmesf','forex',[]],
+            ['BTC','Code-133741','deacmesf','crypto',[]],
+            ['ETH','Code-146021','deacmesf','crypto',[]],
+            ['NASDAQ-100','Code-209742','deacmesf','index',[]],
+            ['S&P 500','Code-209742','deacmesf','index',[]],
 ]
 
-USD = ['USD','Code-098662',[]]
+USD = [['USD','Code-098662','deanybtsf','forex',[]]]
 
 NEW_YORK = [
-            ['OIL','Code-067651',[]],
-            ['GAS','Code-023651',[]],
+            ['OIL','Code-067651','deanymesf','other',[]],
+            ['GAS','Code-023651','deanymesf','other',[]],
 ]
 
 COMMODITY = [
-            ['SILVER','Code-084691',[]],
-            ['COPPER','Code-085692',[]],
-            ['GOLD','Code-088691',[]],
-    
+            ['SILVER','Code-084691','deacmxsf','metals',[]],
+            ['COPPER','Code-085692','deacmxsf','metals',[]],
+            ['GOLD','Code-088691','deacmxsf','metals',[]],
 ]
 
+ALL_ASSET = CHICAGO + USD + NEW_YORK + COMMODITY
+
+print(ALL_ASSET)
 # --- FUNCTIONS --- #
 
 def init_csv_files_from_html(start_date, weeks_numbers):
@@ -64,23 +66,26 @@ def init_csv_files_from_html(start_date, weeks_numbers):
     url_set = create_every_url(start_date, weeks_numbers)
 
     #Request every url (every tuesday)
-    for url in tqdm(url_set):
+    for url in tqdm(url_set[0:8]):
         parser(url[1],url[0]) #parser(https://.... , 2022-xx-xx)
-        #print("{} added".format(url[0].strftime("%d/%m/%y")))
+        
         sleep(randint(1,3))
 
 
-    for money in major_fx:
-        dataframe_to_csv(money[0].lower(), money[2])
+    for asset in ALL_ASSET:
+        dataframe_to_csv(asset[0].lower(), asset[4], asset[3])
 
-def dataframe_to_csv(money, data):
-    #Reverse to get latest at the top
+def dataframe_to_csv(asset, data, outdir):
+    #Reverse to get newest to oldest
     data.reverse()
     df = pd.DataFrame(data)
-
-    #Write Symbols DataFrames in csv 
-    df.to_csv(f"csv_folder/{money}.csv", index=False)
-    print(f"##-- {money.upper()} --##")
+    import os
+    #Write Symbols DataFrames in csv
+    
+    if not os.path.exists(os.path.join(os.getcwd(),'csv_folder',outdir)):
+        os.mkdir(os.path.join(os.getcwd(),'csv_folder',outdir))
+    df.to_csv(f"csv_folder\\{outdir}\\{asset}.csv", index=False)
+    print(f"##-- {asset.upper()} --##")
     print(df,"\n")
     
 
@@ -96,8 +101,17 @@ def create_every_url(start_date, weeks_numbers):
     date = start_date
     url_list = list()
     for i in range(weeks_numbers):
-        url = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{}/futures/deacmesf{}.htm".format(str(date.strftime("%y")),str(date.strftime("%m%d%y")))
-        url_list.append((date,url))
+        url_chicago = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{}/futures/deacmesf{}.htm".format(str(date.strftime("%y")),str(date.strftime("%m%d%y")))
+        url_list.append((date,url_chicago))
+
+        url_ny = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{}/futures/deanymesf{}.htm".format(str(date.strftime("%y")),str(date.strftime("%m%d%y")))
+        url_list.append((date,url_ny))
+
+        url_usd = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{}/futures/deanybtsf{}.htm".format(str(date.strftime("%y")),str(date.strftime("%m%d%y")))
+        url_list.append((date,url_usd))
+
+        url_commodity = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{}/futures/deacmxsf{}.htm".format(str(date.strftime("%y")),str(date.strftime("%m%d%y"))) 
+        url_list.append((date,url_commodity))
 
         #Date incrementation by 7 days (each tuesday)
         date = date + timedelta(days=7)
@@ -124,8 +138,8 @@ def parser(url,date):
         lines = body.splitlines()
         for idx, item in enumerate(lines):
             words = item.split()
-            for money in major_fx:
-                if money[1] in words:
+            for asset in ALL_ASSET:
+                if asset[1] in words:
                     long = int(lines[idx+9].split()[0].replace(",",""))
                     short = int(lines[idx+9].split()[1].replace(",",""))
 
@@ -134,7 +148,6 @@ def parser(url,date):
 
                     
                     net_position = long - short
-                    print(net_position)
 
                     dico = {
                         'Date':new_date,
@@ -143,9 +156,11 @@ def parser(url,date):
                         'Change long':cloture_long,
                         'Change short':cloture_short,
                         'Net position': net_position,
+                        'url_report':asset[2],
+                        'type': asset[3],
                     }
                     
-                    money[2].append(dico)
+                    asset[4].append(dico)
 
 def get_request_url(url):
     try:
@@ -161,11 +176,16 @@ def get_request_url(url):
 
 def main():
     if RUN:
-        init_csv_files_from_html(date(2021,1,5), 93)
+        init_csv_files_from_html(date(2022,1,4), 41)
         #create_every_url(date(2021,1,5), 92)
         #parser('cot.html', date(2021,9,6))
         #for m in major_fx:
         #    print(m)
+        
 
+    
+    #for url in create_every_url(date(2022,1,4), 41):
+    #    print(url)
+    
 if __name__ == "__main__":
     main()
