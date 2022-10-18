@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import date
+import seaborn as sns
 
 major_fx = ['EUR','JPY','AUD','NZD','CAD','GBP','CHF']
 CHICAGO = [
@@ -68,9 +69,10 @@ def compare_row(dataframe):
     if new_net == old_net:
         return "➡️"
 
-@st.cache
-def convert_df(df):
-    return df.to_csv().encode('utf-8')
+#@st.cache
+#def convert_df(df):
+#    return df.to_csv().encode('utf-8')
+
 st.header("Tableaux de données par actifs")
 
 #Liste de tous les actifs par leur nom
@@ -80,6 +82,9 @@ choices_asset = [item[0] for item in ALL_ASSET]
 for i,choice in enumerate(choices_asset):
     if choice == 'USD':
         usd_index = i
+
+#Change color gradient
+cm = sns.blend_palette(['red','white','green'], as_cmap=True, n_colors=4)
 
 df = csv_to_dataframe("csv_folder/forex/usd.csv")
 #Liste de toutes les dates
@@ -99,17 +104,9 @@ with col1:
     index = choices_asset.index(option)
     #Lis le fichier CSV en fonction de l'actif sélectionné
     df = csv_to_dataframe(f"csv_folder/{ALL_ASSET[index][3]}/{option.lower()}.csv",'Date')
-    st.markdown(f"<h1 style='text-align: center'>{option} {compare_row(df)}</h1>", unsafe_allow_html=True)
-    st.table(df.drop(['Long','Short','url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0))
-    
-    csv = convert_df(df)
-    date = df.index[0].replace("/","-")
-    st.download_button(
-        label="Exporter le CSV",
-        data=csv,
-        file_name=f'{option}_{date}.csv',
-        mime='text/csv',
-    )
+    df = df.drop(['Long','Short','url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0, cmap=cm)
+    st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
+    st.table(df)
 
 with col2:
     option = st.selectbox(
@@ -118,15 +115,17 @@ with col2:
     index = choices_asset.index(option)
     #Lis le fichier CSV en fonction de l'actif sélectionné
     df = csv_to_dataframe(f"csv_folder/{ALL_ASSET[index][3]}/{option.lower()}.csv",'Date')
-    st.markdown(f"<h1 style='text-align: center'>{option} {compare_row(df)}</h1>", unsafe_allow_html=True)
-    st.table(df.drop(['Long','Short','url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0))
+    df = df.drop(['Long','Short','url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0, cmap=cm)
+    st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
+    st.table(df)
 
-    csv = convert_df(df)
-    date = df.index[0].replace("/","-")
-    st.download_button(
-        label="Exporter le CSV",
-        data=csv,
-        file_name=f'{option}_{date}.csv',
-        mime='text/csv',
-    )
+    
 
+    #csv = convert_df(df)
+    #date = df.index[0].replace("/","-")
+    #st.download_button(
+    #    label="Exporter le CSV",
+    #    data=csv,
+    #    file_name=f'{option}_{date}.csv',
+    #    mime='text/csv',
+    #)
