@@ -17,7 +17,8 @@ CHICAGO = [
             ['BTC','Code-133741','deacmesf','crypto',[]],
             ['ETH','Code-146021','deacmesf','crypto',[]],
             ['NASDAQ-100','Code-209742','deacmesf','index',[]],
-            ['S&P 500','Code-209742','deacmesf','index',[]],
+            ['S&P 500','Code-13874A','deacmesf','index',[]],
+
 ]
 
 USD = [['USD','Code-098662','deanybtsf','forex',[]]]
