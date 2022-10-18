@@ -80,7 +80,7 @@ for i,choice in enumerate(choices_asset):
     if choice == 'USD':
         usd_index = i
 
-df = csv_to_dataframe("csv_folder\\forex\\usd.csv")
+df = csv_to_dataframe("csv_folder/forex/usd.csv")
 #Liste de toutes les dates
 dates = list(df.index)
 
@@ -97,7 +97,7 @@ with col1:
      )
     index = choices_asset.index(option)
     #Lis le fichier CSV en fonction de l'actif sélectionné
-    df = csv_to_dataframe(f"csv_folder\\{ALL_ASSET[index][3]}\\{option.lower()}.csv",'Date')
+    df = csv_to_dataframe(f"csv_folder/{ALL_ASSET[index][3]}/{option.lower()}.csv",'Date')
     st.markdown(f"<h1 style='text-align: center'>{option} {compare_row(df)}</h1>", unsafe_allow_html=True)
     st.table(df.drop(['Long','Short','url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0))
     
@@ -116,7 +116,7 @@ with col2:
      )
     index = choices_asset.index(option)
     #Lis le fichier CSV en fonction de l'actif sélectionné
-    df = csv_to_dataframe(f"csv_folder\\{ALL_ASSET[index][3]}\\{option.lower()}.csv",'Date')
+    df = csv_to_dataframe(f"csv_folder/{ALL_ASSET[index][3]}/{option.lower()}.csv",'Date')
     st.markdown(f"<h1 style='text-align: center'>{option} {compare_row(df)}</h1>", unsafe_allow_html=True)
     st.table(df.drop(['Long','Short','url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0))
 
