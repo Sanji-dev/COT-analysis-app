@@ -80,7 +80,7 @@ for i,choice in enumerate(choices_asset):
     if choice == 'USD':
         usd_index = i
 
-df = csv_to_dataframe("csv_folder\\forex\\usd.csv")
+df = csv_to_dataframe("csv_folder/forex/usd.csv")
 #Liste de toutes les dates
 dates = list(df.index)
 
