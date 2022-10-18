@@ -67,7 +67,10 @@ def compare_row(dataframe):
     if new_net == old_net:
         return "➡️"
 
-st.header("Tableaux de données par devise")
+@st.cache
+def convert_df(df):
+    return df.to_csv().encode('utf-8')
+st.header("Tableaux de données par actifs")
 
 #Liste de tous les actifs par leur nom
 choices_asset = [item[0] for item in ALL_ASSET]
@@ -82,9 +85,9 @@ df = csv_to_dataframe("csv_folder\\forex\\usd.csv")
 dates = list(df.index)
 
 #Input slider pour filter la date range
-start = st.select_slider("Sélectionner la date de début", options = dates, value=("04/01/22"))
+start = st.select_slider("Sélectionner la date de début", options = dates, value=("19/07/22"))
 
-st.caption("Etudes sur **{}** semaines".format(dates.index(start)+1))
+st.caption("Etude sur **{}** semaines".format(dates.index(start)+1))
 
 col1, col2 = st.columns(2)
 
@@ -92,41 +95,37 @@ with col1:
     option = st.selectbox(
     'Premier actif ?', choices_asset, index=usd_index
      )
-    
-
     index = choices_asset.index(option)
-
     #Lis le fichier CSV en fonction de l'actif sélectionné
     df = csv_to_dataframe(f"csv_folder\\{ALL_ASSET[index][3]}\\{option.lower()}.csv",'Date')
     st.markdown(f"<h1 style='text-align: center'>{option} {compare_row(df)}</h1>", unsafe_allow_html=True)
     st.table(df.drop(['Long','Short','url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0))
     
+    csv = convert_df(df)
+    date = df.index[0].replace("/","-")
+    st.download_button(
+        label="Exporter le CSV",
+        data=csv,
+        file_name=f'{option}_{date}.csv',
+        mime='text/csv',
+    )
 
 with col2:
     option = st.selectbox(
     'Second actif ?', choices_asset
      )
-    
-
     index = choices_asset.index(option)
-
     #Lis le fichier CSV en fonction de l'actif sélectionné
     df = csv_to_dataframe(f"csv_folder\\{ALL_ASSET[index][3]}\\{option.lower()}.csv",'Date')
     st.markdown(f"<h1 style='text-align: center'>{option} {compare_row(df)}</h1>", unsafe_allow_html=True)
-
     st.table(df.drop(['Long','Short','url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0))
 
-@st.cache
-def convert_df(df):
-    return df.to_csv().encode('utf-8')
-
-csv = convert_df(df)
-
-date = df.index[0].replace("/","-")
-st.download_button(
-    label="Exporter le CSV",
-    data=csv,
-    file_name=f'{option}_{date}.csv',
-    mime='text/csv',
-)
+    csv = convert_df(df)
+    date = df.index[0].replace("/","-")
+    st.download_button(
+        label="Exporter le CSV",
+        data=csv,
+        file_name=f'{option}_{date}.csv',
+        mime='text/csv',
+    )
 
