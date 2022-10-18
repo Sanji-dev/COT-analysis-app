@@ -56,6 +56,16 @@ st.markdown(
 def csv_to_dataframe(file, index="Date"):
     return pd.read_csv(file, index_col=index)
 
+@st.cache
+def compare_row(dataframe):
+    new_net = dataframe.iloc[0,4]
+    old_net = dataframe.iloc[1,4]
+    if new_net > old_net:
+        return "↗️"
+    if new_net < old_net:
+        return "↘️"
+    if new_net == old_net:
+        return "➡️"
 
 st.header("Tableaux de données par devise")
 
@@ -82,27 +92,29 @@ with col1:
     option = st.selectbox(
     'Premier actif ?', choices_asset, index=usd_index
      )
-    st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
+    
 
     index = choices_asset.index(option)
 
     #Lis le fichier CSV en fonction de l'actif sélectionné
     df = csv_to_dataframe(f"csv_folder\\{ALL_ASSET[index][3]}\\{option.lower()}.csv",'Date')
-
-    st.table(df.drop(['url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0))
+    st.markdown(f"<h1 style='text-align: center'>{option} {compare_row(df)}</h1>", unsafe_allow_html=True)
+    st.table(df.drop(['Long','Short','url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0))
+    
 
 with col2:
     option = st.selectbox(
     'Second actif ?', choices_asset
      )
-    st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
+    
 
     index = choices_asset.index(option)
 
     #Lis le fichier CSV en fonction de l'actif sélectionné
     df = csv_to_dataframe(f"csv_folder\\{ALL_ASSET[index][3]}\\{option.lower()}.csv",'Date')
+    st.markdown(f"<h1 style='text-align: center'>{option} {compare_row(df)}</h1>", unsafe_allow_html=True)
 
-    st.table(df.drop(['url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0))
+    st.table(df.drop(['Long','Short','url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0))
 
 @st.cache
 def convert_df(df):
