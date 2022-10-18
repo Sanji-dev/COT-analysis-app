@@ -97,6 +97,7 @@ st.caption("Etude sur **{}** semaines".format(dates.index(start)+1))
 
 col1, col2 = st.columns(2)
 
+
 with col1:
     option = st.selectbox(
     'Premier actif ?', choices_asset, index=usd_index
@@ -104,7 +105,7 @@ with col1:
     index = choices_asset.index(option)
     #Lis le fichier CSV en fonction de l'actif sélectionné
     df = csv_to_dataframe(f"csv_folder/{ALL_ASSET[index][3]}/{option.lower()}.csv",'Date')
-    df = df.drop(['Long','Short','url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0, cmap=cm)
+    df = df.drop(['Long','Short','url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(subset=['Net position'],axis=0, cmap=cm).bar(height=70,color=['red','green'],align='zero',subset=['Change long', 'Change short'])
     st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
     st.table(df)
 
@@ -115,7 +116,7 @@ with col2:
     index = choices_asset.index(option)
     #Lis le fichier CSV en fonction de l'actif sélectionné
     df = csv_to_dataframe(f"csv_folder/{ALL_ASSET[index][3]}/{option.lower()}.csv",'Date')
-    df = df.drop(['Long','Short','url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(axis=0, cmap=cm)
+    df = df.drop(['Long','Short','url_report', 'type'], axis=1).head(dates.index(start)+1).style.background_gradient(subset=['Net position'],axis=0, cmap=cm).bar(height=70,color=['red','green'],align='zero',subset=['Change long', 'Change short'])
     st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
     st.table(df)
 
