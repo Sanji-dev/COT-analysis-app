@@ -9,7 +9,14 @@ def main():
         💵 💴 💶 💷  
 
         La finalité est de déduire **l'Orderflow de la Smart Money** de manière la plus probable en fonction de nos analyses.
-    """
+
+        ### Applications
+        - ⚖️ Comparateur d'actifs
+        - 💸 Meilleurs metriques (*en développement*)
+
+        ### Contact
+        Si vous observer quelconques bugs ou avez des idées d'améliorations, contactez moi via **Discord** 
+    """ 
     )
 
 if __name__ == "__main__":
