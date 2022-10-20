@@ -22,6 +22,8 @@ CHICAGO = [
 
 ]
 
+DJ = [['DOW JONES','Code-124603','deacbtsf','index',[]]]
+
 USD = [['USD','Code-098662','deanybtsf','forex',[]]]
 
 NEW_YORK = [
@@ -35,7 +37,7 @@ COMMODITY = [
             ['GOLD','Code-088691','deacmxsf','metals',[]],
 ]
 
-ALL_ASSET = CHICAGO + USD + NEW_YORK + COMMODITY
+ALL_ASSET = CHICAGO + DJ + USD + NEW_YORK + COMMODITY
 
 
 
@@ -81,15 +83,13 @@ def main():
 
     #Récupère l'index de l'USD dans la liste pour l'afficher par défaut dans la selectbox
     choices_asset = [item[0] for item in ALL_ASSET]
-    
-
     st.caption("Etude sur **{}** semaines".format(dates.index(start)+1))
     col1, col2 = st.columns(2)
     cm = sns.blend_palette(['red','white','green'], as_cmap=True, n_colors=4)
 
     with col1:
         option = st.selectbox(
-            'Premier actif ?', choices_asset, index=0
+            'Premier actif ?', choices_asset, index=0 #EUR default
         )
         #Lis le fichier CSV en fonction de l'actif sélectionné
         index = choices_asset.index(option)
@@ -100,7 +100,7 @@ def main():
         df = customize_dataframe(df,dates.index(start)+1)
         st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
         st.table(df)
-
+        
         #Download button
         date = df.index[0].replace("/","-")
         st.download_button(
@@ -111,14 +111,14 @@ def main():
         )
     with col2:
         option = st.selectbox(
-        'Second actif ?', choices_asset, index = 14
+        'Second actif ?', choices_asset, index = 15 #USD default
         )
         #Lis le fichier CSV en fonction de l'actif sélectionné
         index = choices_asset.index(option)
         df = csv_to_dataframe(f"csv_folder/{ALL_ASSET[index][3]}/{option.lower()}.csv",'Date')
         #Convert to df to csv for download button
         csv = convert_df(df)
-        
+
         df = customize_dataframe(df,dates.index(start)+1)
         st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
         st.table(df)
@@ -133,6 +133,7 @@ def main():
         )
 if __name__ == "__main__":
     st.set_page_config(
+        page_title="Comparateur d'actifs",
         page_icon="⚖️",
         layout="wide",
     )

@@ -1,4 +1,9 @@
 import streamlit as st
+import pandas as pd
+
+@st.cache
+def csv_to_dataframe(file, index="Date"):
+    return pd.read_csv(file, index_col=index)
 
 def main():
     st.title("Commitments of traders - Datas 📊")
@@ -12,13 +17,15 @@ def main():
 
         ### Applications
         - ⚖️ Comparateur d'actifs
-        - 💸 Meilleurs metriques (*en développement*)
+        - 💸 Meilleures metriques (*en développement*)
 
         ### Contact
         Si vous observer quelconques bugs ou avez des idées d'améliorations, contactez moi via **Discord** 
     """ 
     )
 
+    df = csv_to_dataframe("csv_folder/forex/usd.csv")
+    df
 if __name__ == "__main__":
     st.set_page_config(
         page_title="Rapports COT",
