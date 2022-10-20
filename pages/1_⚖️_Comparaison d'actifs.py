@@ -94,30 +94,43 @@ def main():
         #Lis le fichier CSV en fonction de l'actif sélectionné
         index = choices_asset.index(option)
         df = csv_to_dataframe(f"csv_folder/{ALL_ASSET[index][3]}/{option.lower()}.csv",'Date')
+        #Convert to df to csv for download button
+        csv = convert_df(df)
+
         df = customize_dataframe(df,dates.index(start)+1)
         st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
         st.table(df)
 
+        #Download button
+        date = df.index[0].replace("/","-")
+        st.download_button(
+            label="Exporter le CSV",
+            data=csv,
+            file_name=f'{option}_{date}.csv',
+            mime='text/csv',
+        )
     with col2:
         option = st.selectbox(
         'Second actif ?', choices_asset, index = 14
         )
-        index = choices_asset.index(option)
         #Lis le fichier CSV en fonction de l'actif sélectionné
+        index = choices_asset.index(option)
         df = csv_to_dataframe(f"csv_folder/{ALL_ASSET[index][3]}/{option.lower()}.csv",'Date')
+        #Convert to df to csv for download button
+        csv = convert_df(df)
+        
         df = customize_dataframe(df,dates.index(start)+1)
         st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
         st.table(df)
        
-
-        #csv = convert_df(df)
-        #date = df.index[0].replace("/","-")
-        #st.download_button(
-        #    label="Exporter le CSV",
-        #    data=csv,
-        #    file_name=f'{option}_{date}.csv',
-        #    mime='text/csv',
-        #)
+        #Download button
+        date = df.index[0].replace("/","-")
+        st.download_button(
+            label="Exporter le CSV",
+            data=csv,
+            file_name=f'{option}_{date}.csv',
+            mime='text/csv',
+        )
 if __name__ == "__main__":
     st.set_page_config(
         page_icon="⚖️",
