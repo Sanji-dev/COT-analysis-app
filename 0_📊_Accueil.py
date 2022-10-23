@@ -24,8 +24,6 @@ def main():
     """ 
     )
 
-    df = csv_to_dataframe("csv_folder/forex/usd.csv")
-    df
 if __name__ == "__main__":
     st.set_page_config(
         page_title="Rapports COT",

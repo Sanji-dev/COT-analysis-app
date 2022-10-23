@@ -104,8 +104,8 @@ def create_every_url(start_date, weeks_numbers):
     date = start_date
     url_list = list()
     for i in range(weeks_numbers):
-        #url_chicago = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{}/futures/deacmesf{}.htm".format(str(date.strftime("%y")),str(date.strftime("%m%d%y")))
-        #url_list.append((date,url_chicago))
+        url_chicago = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{}/futures/deacmesf{}.htm".format(str(date.strftime("%y")),str(date.strftime("%m%d%y")))
+        url_list.append((date,url_chicago))
         
         url_dj = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{}/futures/deacbtsf{}.htm".format(str(date.strftime("%y")),str(date.strftime("%m%d%y")))
         url_list.append((date,url_dj))
@@ -182,7 +182,7 @@ def get_request_url(url):
 
 def main():
     if RUN:
-        init_csv_files_from_html(date(2022,1,4), 41)
+        init_csv_files_from_html(date(2022,1,4), 42)
         #create_every_url(date(2021,1,5), 92)
         #parser('cot.html', date(2021,9,6))
         #for m in major_fx:
