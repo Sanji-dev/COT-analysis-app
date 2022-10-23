@@ -9,6 +9,7 @@ from tqdm import tqdm
 # --- GLOBAL --- #
 '''
 ICE Futures US (USD)         --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2021/futures/deanybtsf010521.htm
+Chicago Board (DowJones)     --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2022/futures/deacbtsf010422.htm
 Chicago Mercantile Exchange  --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2022/futures/deacmesf091322.htm
 New York Mercantile Exchange --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2021/futures/deanymesf010521.htm
 Commodity Exchange           --> https://www.cftc.gov/sites/default/files/files/dea/cotarchives/2021/futures/deacmxsf010521.htm
@@ -35,6 +36,8 @@ CHICAGO = [
             ['S&P 500','Code-13874A','deacmesf','index',[]],
 ]
 
+DJ = [['DOW JONES','Code-124603','deacbtsf','index',[]]]
+
 USD = [['USD','Code-098662','deanybtsf','forex',[]]]
 
 NEW_YORK = [
@@ -48,7 +51,7 @@ COMMODITY = [
             ['GOLD','Code-088691','deacmxsf','metals',[]],
 ]
 
-ALL_ASSET = CHICAGO + USD + NEW_YORK + COMMODITY
+ALL_ASSET = CHICAGO + DJ + USD + NEW_YORK + COMMODITY 
 
 print(ALL_ASSET)
 # --- FUNCTIONS --- #
@@ -103,6 +106,9 @@ def create_every_url(start_date, weeks_numbers):
     for i in range(weeks_numbers):
         url_chicago = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{}/futures/deacmesf{}.htm".format(str(date.strftime("%y")),str(date.strftime("%m%d%y")))
         url_list.append((date,url_chicago))
+        
+        url_dj = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{}/futures/deacbtsf{}.htm".format(str(date.strftime("%y")),str(date.strftime("%m%d%y")))
+        url_list.append((date,url_dj))
 
         url_ny = "https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{}/futures/deanymesf{}.htm".format(str(date.strftime("%y")),str(date.strftime("%m%d%y")))
         url_list.append((date,url_ny))
@@ -176,7 +182,7 @@ def get_request_url(url):
 
 def main():
     if RUN:
-        init_csv_files_from_html(date(2022,1,4), 41)
+        init_csv_files_from_html(date(2022,1,4), 42)
         #create_every_url(date(2021,1,5), 92)
         #parser('cot.html', date(2021,9,6))
         #for m in major_fx:
