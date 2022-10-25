@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import date
 import seaborn as sns
+from datetime import date, timedelta, datetime
 
 major_fx = ['EUR','JPY','AUD','NZD','CAD','GBP','CHF']
 CHICAGO = [
@@ -39,7 +40,18 @@ COMMODITY = [
 
 ALL_ASSET = CHICAGO + DJ + USD + NEW_YORK + COMMODITY
 
+def update_csv():
+    pass
 
+def check_last_row(last_date):
+    str_to_date = datetime.strptime(last_date,'%d/%m/%y').date()
+    today = date.today()
+    delta = today - str_to_date
+    if delta > timedelta(days=10):
+        st.header("Delta supérieur à 10: ")
+        #update_csv()
+    else:
+        st.header("Delta inférieur à 10")
 
 @st.cache
 def csv_to_dataframe(file, index="Date"):
@@ -77,7 +89,7 @@ def main():
     
     df = csv_to_dataframe("csv_folder/forex/usd.csv")
     dates = list(df.index)
-
+    check_last_row(dates[0])
     #Input slider pour filter la date range
     start = st.select_slider("Sélectionner la date de début", options = dates, value=("19/07/22"))
 
