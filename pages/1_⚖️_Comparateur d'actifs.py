@@ -3,6 +3,11 @@ import pandas as pd
 from datetime import date
 import seaborn as sns
 from datetime import date, timedelta, datetime
+from bs4 import BeautifulSoup
+from time import sleep
+from random import randint
+import requests
+import os
 
 major_fx = ['EUR','JPY','AUD','NZD','CAD','GBP','CHF']
 CHICAGO = [
@@ -40,24 +45,111 @@ COMMODITY = [
 
 ALL_ASSET = CHICAGO + DJ + USD + NEW_YORK + COMMODITY
 
-def update_csv():
-    pass
+def update_csv(tuesday_date):
+    year = str(tuesday_date.strftime("%y"))
+    day = str(tuesday_date.strftime("%m%d%y"))
+    url_list = list()
+
+    url_chicago =   f"https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{year}/futures/deacmesf{day}.htm"
+    url_list.append(url_chicago)
+
+    url_dj =        f"https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{year}/futures/deacbtsf{day}.htm"
+    url_list.append(url_dj)
+
+    url_ny =        f"https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{year}/futures/deanymesf{day}.htm"
+    url_list.append(url_ny)
+
+    url_usd =       f"https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{year}/futures/deanybtsf{day}.htm"
+    url_list.append(url_usd)
+
+    url_commodity = f"https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{year}/futures/deacmxsf{day}.htm"
+    url_list.append(url_commodity)
+
+    for url in url_list:
+        print(url)
+        sleep(randint(1, 3))
+        parser(url, tuesday_date)
+
+    for asset in ALL_ASSET:
+        dataframe_to_csv(asset[0].lower(), asset[4], asset[3])
+    st.experimental_memo.clear()
+
+def dataframe_to_csv(asset, data, outdir):
+    old_df = csv_to_dataframe(f"csv_folder\\{outdir}\\{asset}.csv", index=False)
+    new_df = pd.concat([pd.DataFrame(data),old_df],ignore_index=True)
+        
+    #Update with new report in CSV files
+    
+    new_df.to_csv(f"csv_folder\\{outdir}\\{asset}.csv", index=False)
+    print(f"##-- {asset.upper()} --##")
+    print(new_df,"\n")
+
+def parser(url,date):
+    ''' Parse html file from specific URL after requesting it.
+
+    Args:   url(string): Url to request to
+            date(date): the date we want to get COT datas from
+    
+    Return: (int): Status code
+    '''
+
+    new_date  = date.strftime("%d/%m/%y")
+    html_response = get_request_url(url)
+
+    #If html response is not None
+    if html_response:
+        soup = BeautifulSoup(html_response,"html.parser")
+        body = soup.body.get_text()
+
+        lines = body.splitlines()
+        for idx, item in enumerate(lines):
+            words = item.split()
+            for asset in ALL_ASSET:
+                if asset[1] in words:
+                    long = int(lines[idx+9].split()[0].replace(",",""))
+                    short = int(lines[idx+9].split()[1].replace(",",""))
+
+                    cloture_long = int(lines[idx+12].split()[0].replace(",",""))
+                    cloture_short = int(lines[idx+12].split()[1].replace(",",""))
+
+                    
+                    net_position = long - short
+
+                    dico = {
+                        'Date':new_date,
+                        'Long': long,
+                        'Short': short,
+                        'Change long':cloture_long,
+                        'Change short':cloture_short,
+                        'Net position': net_position,
+                        'url_report':asset[2],
+                        'type': asset[3],
+                    }
+                    
+                    asset[4].append(dico)
+
+def get_request_url(url):
+    try:
+        html_response = requests.get(url)
+        if html_response.status_code == 200:
+            return html_response.content
+        return None
+    except requests.exceptions.RequestException as e: 
+        print(f'save failed: unable to get page content: {e}')
+        return None
 
 def check_last_row(last_date):
     str_to_date = datetime.strptime(last_date,'%d/%m/%y').date()
     today = date.today()
     delta = today - str_to_date
     if delta > timedelta(days=10):
-        st.header("Delta supérieur à 10: ")
-        #update_csv()
-    else:
-        st.header("Delta inférieur à 10")
+        update_csv(str_to_date+ timedelta(days=7))
 
-@st.cache
+@st.experimental_memo
 def csv_to_dataframe(file, index="Date"):
     return pd.read_csv(file, index_col=index)
 
-@st.cache(allow_output_mutation=True)
+
 def customize_dataframe(df,start):
     cm = sns.blend_palette(['red','white','green'], as_cmap=True, n_colors=4)
 
@@ -69,18 +161,6 @@ def customize_dataframe(df,start):
     )
     return df_customized
 
-@st.cache
-def compare_row(dataframe):
-    new_net = dataframe.iloc[0,4]
-    old_net = dataframe.iloc[1,4]
-    if new_net > old_net:
-        return "↗️"
-    if new_net < old_net:
-        return "↘️"
-    if new_net == old_net:
-        return "➡️"
-
-@st.cache
 def convert_df(df):
     return df.to_csv().encode('utf-8')
 
@@ -89,7 +169,10 @@ def main():
     
     df = csv_to_dataframe("csv_folder/forex/usd.csv")
     dates = list(df.index)
+
+    #Check for new COT report
     check_last_row(dates[0])
+    
     #Input slider pour filter la date range
     start = st.select_slider("Sélectionner la date de début", options = dates, value=("19/07/22"))
 
