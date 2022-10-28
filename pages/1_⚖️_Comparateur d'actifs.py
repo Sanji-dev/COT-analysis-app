@@ -203,7 +203,9 @@ def main():
             data=csv,
             file_name=f'{option}_{date}.csv',
             mime='text/csv',
+            key='button1',
         )
+
     with col2:
         option = st.selectbox(
         'Second actif ?', choices_asset, index = 15 #USD default
@@ -225,6 +227,7 @@ def main():
             data=csv,
             file_name=f'{option}_{date}.csv',
             mime='text/csv',
+            key='button2',
         )
 if __name__ == "__main__":
     st.set_page_config(
