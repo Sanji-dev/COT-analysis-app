@@ -75,7 +75,7 @@ def update_csv(tuesday_date):
     st.experimental_memo.clear()
 
 def dataframe_to_csv(asset, data, outdir):
-    old_df = csv_to_dataframe(f"csv_folder\\{outdir}\\{asset}.csv", index=False)
+    old_df = csv_to_dataframe(f"csv_folder/{outdir}/{asset}.csv", index=False)
     new_df = pd.concat([pd.DataFrame(data),old_df],ignore_index=True)
         
     #Update with new report in CSV files
