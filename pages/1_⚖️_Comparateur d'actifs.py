@@ -64,9 +64,8 @@ def update_csv(tuesday_date):
 
     url_commodity = f"https://www.cftc.gov/sites/default/files/files/dea/cotarchives/20{year}/futures/deacmxsf{day}.htm"
     url_list.append(url_commodity)
-
+    print(url_list)
     for url in url_list:
-        print(url)
         sleep(randint(1, 3))
         parser(url, tuesday_date)
 
@@ -80,9 +79,9 @@ def dataframe_to_csv(asset, data, outdir):
         
     #Update with new report in CSV files
     
-    new_df.to_csv(f"csv_folder\\{outdir}\\{asset}.csv", index=False)
+    new_df.to_csv(f"csv_folder/{outdir}/{asset}.csv", index=False)
     print(f"##-- {asset.upper()} --##")
-    print(new_df,"\n")
+    print(new_df.head(),"\n")
 
 def parser(url,date):
     ''' Parse html file from specific URL after requesting it.
