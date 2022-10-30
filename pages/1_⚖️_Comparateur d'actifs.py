@@ -9,7 +9,6 @@ from random import randint
 import requests
 import os
 
-major_fx = ['EUR','JPY','AUD','NZD','CAD','GBP','CHF']
 CHICAGO = [
             ['EUR','Code-099741','deacmesf','forex',[]], #Asset , Code, End_url, Type(folder), List of value
             ['JPY','Code-097741','deacmesf','forex',[]],
@@ -70,7 +69,8 @@ def main():
         #Lis le fichier CSV en fonction de l'actif sélectionné
         index = choices_asset.index(option)
         df = csv_to_dataframe(f"csv_folder/{ALL_ASSET[index][3]}/{option.lower()}.csv",'Date')
-        #Convert to df to csv for download button
+
+        #Convert dataframe to csv for download button
         csv = convert_df(df)
 
         df = customize_dataframe(df,dates.index(start)+1)
