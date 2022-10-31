@@ -101,8 +101,6 @@ def main():
     with st.expander("Voir explications"):
         st.markdown(
             """
-            Un algorithme permet d'identifier puis de classer les actifs qui ont reçu les plus grosses injections de positions, selon les derniers rapports "Commitments of traders" publiés le vendredi le plus récent.
-
             ##### Etape 1 : Premier tri effectué sur chaque actif.
             Pour un actif donné:
             1. Récupère le **volume de position long** du dernier rapport en date. (Injection de long + clotûre de short).
