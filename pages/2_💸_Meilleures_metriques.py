@@ -70,7 +70,7 @@ def ranking(asset):
             list_rank_short.append((diff,row,asset['Date'][row]))
     
     list_rank_long.sort(reverse=True)
-    list_rank_short.sort(reverse=True)
+    list_rank_short.sort()
     
     if last_change >= 0:
         for idx, item in enumerate(list_rank_long):
@@ -86,41 +86,40 @@ def ranking(asset):
     
 
 
-#def get_evolution_net_total(asset, since=1):
-#    new_net_position = asset.loc[0]['Net position']
-#    old_net_position = asset.loc[since]['Net position']
-#    evolution = (new_net_position - old_net_position)/old_net_position * 100
-#
-#    return evolution
-
 def main():
     st.title("En cours de développement")
 
-    list_evolution = list()
-    for asset in ALL_ASSET[0:1]:
+    final_ranking_long = list()
+    final_ranking_short = list()
+
+    for asset in ALL_ASSET:
         outdir = asset[3]
         file_name = asset[0].lower()
         df = csv_to_dataframe(f"csv_folder/{outdir}/{file_name}.csv",index=None)
+        
         rank, value, list_rank = ranking(df)
+        if value >= 0:
+            final_ranking_long.append((asset[0], rank, value))
+        else:
+            final_ranking_short.append((asset[0], rank, value))
 
         st.header(asset[0])
         st.markdown(f'Rank: **{rank}** Value: {value}')
         new_df = pd.DataFrame(list_rank, columns=['Diff','Index','Date'])
         new_df
-    
-    
-    #df_total = pd.DataFrame(list_evolution, columns=['Asset','Evolution']).sort_values('Evolution')
-    #st.dataframe(rank_long)
-    #st.dataframe(rank_short)
 
+    col1, col2 = st.columns(2)
 
-    #url ='https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-PY0101EN-SkillsNetwork/labs/Module%205/data/addresses.csv'
-    #df = pd.read_csv(url)
-    #df.columns =['First Name', 'Last Name', 'Location ', 'City','State','Area Code']
-    #st.dataframe(df)
-#
-    #st.markdown(type(df))
-    
+    with col1:
+        st.header('Classement LONG')
+        final_ranking_long.sort(key=lambda x: x[1])
+        df = pd.DataFrame(final_ranking_long, columns=['Asset','Rank','Value'])
+        df
+    with col2:
+        st.header('Classement SHORT')
+        final_ranking_short.sort(key=lambda x: x[1])
+        df = pd.DataFrame(final_ranking_short, columns=['Asset','Rank','Value'])
+        df
 
 @st.experimental_memo
 def csv_to_dataframe(file, index="Date"):
