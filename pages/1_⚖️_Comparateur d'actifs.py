@@ -9,7 +9,6 @@ from random import randint
 import requests
 import os
 
-major_fx = ['EUR','JPY','AUD','NZD','CAD','GBP','CHF']
 CHICAGO = [
             ['EUR','Code-099741','deacmesf','forex',[]], #Asset , Code, End_url, Type(folder), List of value
             ['JPY','Code-097741','deacmesf','forex',[]],
@@ -44,6 +43,73 @@ COMMODITY = [
 ]
 
 ALL_ASSET = CHICAGO + DJ + USD + NEW_YORK + COMMODITY
+
+def main():
+    st.header("Tableaux de données par actifs")
+    
+    df = csv_to_dataframe("csv_folder/forex/usd.csv")
+    dates = list(df.index)
+
+    #Check for new COT report
+    check_last_row(dates[0])
+    
+    #Input slider pour filter la date range
+    start = st.select_slider("Sélectionner la date de début", options = dates, value=("19/07/22"))
+
+    #Récupère l'index de l'USD dans la liste pour l'afficher par défaut dans la selectbox
+    choices_asset = [item[0] for item in ALL_ASSET]
+    st.caption("Etude sur **{}** semaines".format(dates.index(start)+1))
+    col1, col2 = st.columns(2)
+    cm = sns.blend_palette(['red','white','green'], as_cmap=True, n_colors=4)
+
+    with col1:
+        option = st.selectbox(
+            'Premier actif ?', choices_asset, index=0 #EUR default
+        )
+        #Lis le fichier CSV en fonction de l'actif sélectionné
+        index = choices_asset.index(option)
+        df = csv_to_dataframe(f"csv_folder/{ALL_ASSET[index][3]}/{option.lower()}.csv",'Date')
+
+        #Convert dataframe to csv for download button
+        csv = convert_df(df)
+
+        df = customize_dataframe(df,dates.index(start)+1)
+        st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
+        st.table(df)
+        
+        #Download button
+        date = df.index[0].replace("/","-")
+        st.download_button(
+            label="Exporter le CSV",
+            data=csv,
+            file_name=f'{option}_{date}.csv',
+            mime='text/csv',
+            key='button1',
+        )
+
+    with col2:
+        option = st.selectbox(
+        'Second actif ?', choices_asset, index = 15 #USD default
+        )
+        #Lis le fichier CSV en fonction de l'actif sélectionné
+        index = choices_asset.index(option)
+        df = csv_to_dataframe(f"csv_folder/{ALL_ASSET[index][3]}/{option.lower()}.csv",'Date')
+        #Convert to df to csv for download button
+        csv = convert_df(df)
+
+        df = customize_dataframe(df,dates.index(start)+1)
+        st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
+        st.table(df)
+       
+        #Download button
+        date = df.index[0].replace("/","-")
+        st.download_button(
+            label="Exporter le CSV",
+            data=csv,
+            file_name=f'{option}_{date}.csv',
+            mime='text/csv',
+            key='button2',
+        )
 
 def update_csv(tuesday_date):
     year = str(tuesday_date.strftime("%y"))
@@ -163,71 +229,6 @@ def customize_dataframe(df,start):
 def convert_df(df):
     return df.to_csv().encode('utf-8')
 
-def main():
-    st.header("Tableaux de données par actifs")
-    
-    df = csv_to_dataframe("csv_folder/forex/usd.csv")
-    dates = list(df.index)
-
-    #Check for new COT report
-    check_last_row(dates[0])
-    
-    #Input slider pour filter la date range
-    start = st.select_slider("Sélectionner la date de début", options = dates, value=("19/07/22"))
-
-    #Récupère l'index de l'USD dans la liste pour l'afficher par défaut dans la selectbox
-    choices_asset = [item[0] for item in ALL_ASSET]
-    st.caption("Etude sur **{}** semaines".format(dates.index(start)+1))
-    col1, col2 = st.columns(2)
-    cm = sns.blend_palette(['red','white','green'], as_cmap=True, n_colors=4)
-
-    with col1:
-        option = st.selectbox(
-            'Premier actif ?', choices_asset, index=0 #EUR default
-        )
-        #Lis le fichier CSV en fonction de l'actif sélectionné
-        index = choices_asset.index(option)
-        df = csv_to_dataframe(f"csv_folder/{ALL_ASSET[index][3]}/{option.lower()}.csv",'Date')
-        #Convert to df to csv for download button
-        csv = convert_df(df)
-
-        df = customize_dataframe(df,dates.index(start)+1)
-        st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
-        st.table(df)
-        
-        #Download button
-        date = df.index[0].replace("/","-")
-        st.download_button(
-            label="Exporter le CSV",
-            data=csv,
-            file_name=f'{option}_{date}.csv',
-            mime='text/csv',
-            key='button1',
-        )
-
-    with col2:
-        option = st.selectbox(
-        'Second actif ?', choices_asset, index = 15 #USD default
-        )
-        #Lis le fichier CSV en fonction de l'actif sélectionné
-        index = choices_asset.index(option)
-        df = csv_to_dataframe(f"csv_folder/{ALL_ASSET[index][3]}/{option.lower()}.csv",'Date')
-        #Convert to df to csv for download button
-        csv = convert_df(df)
-
-        df = customize_dataframe(df,dates.index(start)+1)
-        st.markdown(f"<h1 style='text-align: center'>{option}</h1>", unsafe_allow_html=True)
-        st.table(df)
-       
-        #Download button
-        date = df.index[0].replace("/","-")
-        st.download_button(
-            label="Exporter le CSV",
-            data=csv,
-            file_name=f'{option}_{date}.csv',
-            mime='text/csv',
-            key='button2',
-        )
 if __name__ == "__main__":
     st.set_page_config(
         page_title="Comparateur d'actifs",

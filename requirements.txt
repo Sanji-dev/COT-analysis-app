@@ -6,4 +6,4 @@ requests==2.25.1
 seaborn==0.12.1
 streamlit==1.13.0
 tqdm==4.64.1
-
+millify==0.1.1
