@@ -93,27 +93,32 @@ def get_longest_length(list1, list2):
 
 def main():
     st.header("Plus grosses injections d'ordres des derniers rapports COT")
-
     st.markdown(
-        """
-        Un algorithme permet d'identifier puis de classer les actifs qui ont reçu les plus grosses injections de positions, selon les derniers rapports "Commitments of traders" publiés le vendredi le plus récent.
+            """
+            Un algorithme permet d'identifier puis de classer les actifs qui ont reçu les plus grosses injections de positions, selon les derniers rapports "Commitments of traders" publiés le vendredi le plus récent.
+        """ 
+        )
+    with st.expander("Voir explications"):
+        st.markdown(
+            """
+            Un algorithme permet d'identifier puis de classer les actifs qui ont reçu les plus grosses injections de positions, selon les derniers rapports "Commitments of traders" publiés le vendredi le plus récent.
 
-        ##### Etape 1 : Premier tri effectué sur chaque actif.
-        Pour un actif donné:
-        1. Récupère le **volume de position long** du dernier rapport en date. (Injection de long + clotûre de short).
-        2. Récupère le **volume de position short** du dernier rapport en date. (Injection de short + clotûre de long).
-        3. On fait la différence entre le volume de long et de short pour identifier l'orderflow.
-        4. On refait les mêmes opérations avec tous les autres rapports précédents. ( échantillon de données sur quasi 1 an, depuis le 4 Janvier 2022)
-        5. On classe tous les volumes de positions long d'une part, et les volumes de positions short d'autre part. **Du plus grand au plus petit**.
-        6. Avec ce classement, on peut comparer le dernier volume de position injecté dans l'actif avec tous les autres volumes précédemment injectés.
-        7. De cette manière, plus la position du dernier volume de position injecté est importante dans le classement, plus l'actif est susceptible de nous intéresser car fort orderflow.
-        8. (Exemple: Si le dernier volume de position injecté est classé 1er du classement, alors on en conclu que c'est la plus grosse injection d'ordre de l'année sur cet actif )
+            ##### Etape 1 : Premier tri effectué sur chaque actif.
+            Pour un actif donné:
+            1. Récupère le **volume de position long** du dernier rapport en date. (Injection de long + clotûre de short).
+            2. Récupère le **volume de position short** du dernier rapport en date. (Injection de short + clotûre de long).
+            3. On fait la différence entre le volume de long et de short pour identifier l'orderflow.
+            4. On refait les mêmes opérations avec tous les autres rapports précédents. ( échantillon de données sur quasi 1 an, depuis le 4 Janvier 2022)
+            5. On classe tous les volumes de positions long d'une part, et les volumes de positions short d'autre part. **Du plus grand au plus petit**.
+            6. Avec ce classement, on peut comparer le dernier volume de position injecté dans l'actif avec tous les autres volumes précédemment injectés.
+            7. De cette manière, plus la position du dernier volume de position injecté est importante dans le classement, plus l'actif est susceptible de nous intéresser car fort orderflow.
+            8. (Exemple: Si le dernier volume de position injecté est classé 1er du classement, alors on en conclu que c'est la plus grosse injection d'ordre de l'année sur cet actif )
 
-        ##### Etape 2 : Nouveau tri
-        Enfin, on effectue un nouveau classement composé du rang des derniers volumes injectés de chaque actif (grâce à l'étape 1)
-        Ce classement est observable ci-dessous sous forme de métrique.
-    """ 
-    )
+            ##### Etape 2 : Nouveau tri
+            Enfin, on effectue un nouveau classement composé du rang des derniers volumes injectés de chaque actif (grâce à l'étape 1)
+            Ce classement est observable ci-dessous sous forme de métrique.
+        """ 
+        )
 
     final_ranking_long = list()
     final_ranking_short = list()
