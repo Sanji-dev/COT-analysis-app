@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from millify import millify
 
 CHICAGO = [
             ['EUR','Code-099741','deacmesf','forex',[]], #Asset , Code, End_url, Type(folder), List of value
@@ -76,18 +77,43 @@ def ranking(asset):
         for idx, item in enumerate(list_rank_long):
             if item[1] == 0:   #On récupère dans la liste triée le dernier rapport (indice 0)
                 rank = idx+1
-                return rank, last_change, list_rank_long
+                return rank, last_change
 
     elif last_change < 0:
         for idx, item in enumerate(list_rank_short):
             if item[1] == 0:   #On récupère dans la liste triée le dernier rapport (indice 0)
                 rank = idx+1
-                return rank, last_change, list_rank_short
+                return rank, last_change
     
-
+def get_longest_length(list1, list2):
+    if len(list1) - len(list2) >= 0:
+        return len(list1)
+    else:
+        return len(list2)
 
 def main():
-    st.title("En cours de développement")
+    st.header("Plus grosses injections d'ordres des derniers rapports COT")
+
+    st.markdown(
+        """
+        Un algorithme permet d'identifier puis de classer les actifs qui ont reçu les plus grosses injections de positions, selon les derniers rapports "Commitments of traders" publiés le vendredi le plus récent.
+
+        ##### Etape 1 : Premier tri effectué sur chaque actif.
+        Pour un actif donné:
+        1. Récupère le **volume de position long** du dernier rapport en date. (Injection de long + clotûre de short).
+        2. Récupère le **volume de position short** du dernier rapport en date. (Injection de short + clotûre de long).
+        3. On fait la différence entre le volume de long et de short pour identifier l'orderflow.
+        4. On refait les mêmes opérations avec tous les autres rapports précédents. ( échantillon de données sur quasi 1 an, depuis le 4 Janvier 2022)
+        5. On classe tous les volumes de positions long d'une part, et les volumes de positions short d'autre part. **Du plus grand au plus petit**.
+        6. Avec ce classement, on peut comparer le dernier volume de position injecté dans l'actif avec tous les autres volumes précédemment injectés.
+        7. De cette manière, plus la position du dernier volume de position injecté est importante dans le classement, plus l'actif est susceptible de nous intéresser car fort orderflow.
+        8. (Exemple: Si le dernier volume de position injecté est classé 1er du classement, alors on en conclu que c'est la plus grosse injection d'ordre de l'année sur cet actif )
+
+        ##### Etape 2 : Nouveau tri
+        Enfin, on effectue un nouveau classement composé du rang des derniers volumes injectés de chaque actif (grâce à l'étape 1)
+        Ce classement est observable ci-dessous sous forme de métrique.
+    """ 
+    )
 
     final_ranking_long = list()
     final_ranking_short = list()
@@ -97,29 +123,57 @@ def main():
         file_name = asset[0].lower()
         df = csv_to_dataframe(f"csv_folder/{outdir}/{file_name}.csv",index=None)
         
-        rank, value, list_rank = ranking(df)
+        rank, value = ranking(df)
         if value >= 0:
             final_ranking_long.append((asset[0], rank, value))
         else:
             final_ranking_short.append((asset[0], rank, value))
 
-        st.header(asset[0])
-        st.markdown(f'Rank: **{rank}** Value: {value}')
-        new_df = pd.DataFrame(list_rank, columns=['Diff','Index','Date'])
-        new_df
 
-    col1, col2 = st.columns(2)
+    final_ranking_long.sort(key=lambda x: x[1])
+    df_long = pd.DataFrame(final_ranking_long, columns=['Asset','Rank','Value'])
 
+    final_ranking_short.sort(key=lambda x: x[1])
+    df_short = pd.DataFrame(final_ranking_short, columns=['Asset','Rank','Value'])
+
+    col1, col2= st.columns(2)
     with col1:
-        st.header('Classement LONG')
-        final_ranking_long.sort(key=lambda x: x[1])
-        df = pd.DataFrame(final_ranking_long, columns=['Asset','Rank','Value'])
-        df
+        st.subheader("Classement positions long ↗️")
     with col2:
-        st.header('Classement SHORT')
-        final_ranking_short.sort(key=lambda x: x[1])
-        df = pd.DataFrame(final_ranking_short, columns=['Asset','Rank','Value'])
-        df
+        st.subheader('Classement positions short ↘️')
+
+    col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
+
+    length = get_longest_length(df_long, df_short)
+    for i in range(length-1):
+        try:
+            if i%3 == 0:
+                with col1:
+                    st.metric(label=f'Rang {i+1}', value=df_long['Asset'][i], delta = millify(int(df_long['Value'][i])))
+                with col5:
+                    st.metric(label=f'Rang {i+1}', value=df_short['Asset'][i], delta = millify(int(df_short['Value'][i])))
+            if i%3 == 1:
+                with col2:
+                    st.metric(label=f'Rang {i+1}', value=df_long['Asset'][i], delta = millify(int(df_long['Value'][i])))
+                with col6:
+                    st.metric(label=f'Rang {i+1}', value=df_short['Asset'][i], delta = millify(int(df_short['Value'][i])))
+            if i%3 == 2:
+                with col3:
+                    st.metric(label=f'Rang {i+1}', value=df_long['Asset'][i], delta = millify(int(df_long['Value'][i])))
+                with col7:
+                    st.metric(label=f'Rang {i+1}', value=df_short['Asset'][i], delta = millify(int(df_short['Value'][i])))
+        except KeyError as e:
+            pass
+
+    #col1, col2 = st.columns(2)
+    #with col1:
+    #    final_ranking_long.sort(key=lambda x: x[1])
+    #    df = pd.DataFrame(final_ranking_long, columns=['Asset','Rank','Value'])
+    #    df
+    #with col2:
+    #    final_ranking_short.sort(key=lambda x: x[1])
+    #    df = pd.DataFrame(final_ranking_short, columns=['Asset','Rank','Value'])
+    #    df
 
 @st.experimental_memo
 def csv_to_dataframe(file, index="Date"):
