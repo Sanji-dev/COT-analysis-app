@@ -146,9 +146,8 @@ def main():
         st.subheader('Classement positions short ↘️')
 
     col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
-
-    length = get_longest_length(df_long, df_short)
-    for i in range(length-1):
+    
+    for i in range(length):
         try:
             if i%3 == 0:
                 with col1:
