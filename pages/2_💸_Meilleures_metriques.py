@@ -91,6 +91,30 @@ def get_longest_length(list1, list2):
     else:
         return len(list2)
 
+def try_display_metric_long(i, df_long):
+    ''' Display metric for a long value if it does exists
+
+    Args:   i(int): index in dataframe
+            df_long(dataframe): dataframe of assets in long direction
+    
+    '''
+    try:
+        st.metric(label=f'Rang {i+1}', value=df_long['Asset'][i], delta = millify(int(df_long['Value'][i])))
+    except KeyError as e:
+        pass
+
+def try_display_metric_short(i, df_short):
+    ''' Display metric for a short value if it does exists
+
+    Args:   i(int): index in dataframe
+            df_long(dataframe): dataframe of assets in short direction
+    
+    '''
+    try:
+        st.metric(label=f'Rang {i+1}', value=df_short['Asset'][i], delta = millify(int(df_short['Value'][i])))
+    except KeyError as e:
+        pass
+
 def main():
     st.header("Plus grosses injections d'ordres des derniers rapports COT")
     st.markdown(
@@ -148,25 +172,23 @@ def main():
     col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
     length = get_longest_length(df_long, df_short)
     for i in range(length):
-        try:
-            if i%3 == 0:
-                with col1:
-                    st.metric(label=f'Rang {i+1}', value=df_long['Asset'][i], delta = millify(int(df_long['Value'][i])))
-                with col5:
-                    st.metric(label=f'Rang {i+1}', value=df_short['Asset'][i], delta = millify(int(df_short['Value'][i])))
-            if i%3 == 1:
-                with col2:
-                    st.metric(label=f'Rang {i+1}', value=df_long['Asset'][i], delta = millify(int(df_long['Value'][i])))
-                with col6:
-                    st.metric(label=f'Rang {i+1}', value=df_short['Asset'][i], delta = millify(int(df_short['Value'][i])))
-            if i%3 == 2:
-                with col3:
-                    st.metric(label=f'Rang {i+1}', value=df_long['Asset'][i], delta = millify(int(df_long['Value'][i])))
-                with col7:
-                    st.metric(label=f'Rang {i+1}', value=df_short['Asset'][i], delta = millify(int(df_short['Value'][i])))
-        except KeyError as e:
-            pass
-
+        if i%3 == 0:
+            with col1:
+                try_display_metric_long(i,df_long)
+            with col5:
+                try_display_metric_short(i,df_short)
+        if i%3 == 1:
+            with col2:
+                try_display_metric_long(i,df_long)
+            with col6:
+                try_display_metric_short(i,df_short)
+        if i%3 == 2:
+            with col3:
+                try_display_metric_long(i,df_long)
+            with col7:
+                try_display_metric_short(i,df_short)
+        
+        
     #col1, col2 = st.columns(2)
     #with col1:
     #    final_ranking_long.sort(key=lambda x: x[1])
