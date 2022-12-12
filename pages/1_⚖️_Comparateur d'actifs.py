@@ -49,7 +49,7 @@ def main():
     
     st.markdown(
             """
-            Le comparateur d'actifs permet d'identifier le flux d'ordres à l'achat et à la vente d'un actif donné puis le comparer à celui d'un autre actif.
+            Le comparateur d'actifs permet d'identifier le flux d'ordres à l'achat et à la vente d'un actif donné puis de le comparer à celui d'un autre actif.
             
             Les tableaux représentent tous les rapports COT hebdomadaires publiés depuis plusieurs mois.
             Ainsi, deux actifs corrélés négativement démontrent que la paire d'actifs tend vers un Orderflow important.
