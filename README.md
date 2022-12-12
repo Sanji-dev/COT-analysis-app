@@ -4,7 +4,9 @@
 This project is licensed under the [MIT License](https://github.com/Sanji-moku/COT-analysis-app/blob/main/LICENSE).
 
 # Commitment of Traders application d'analyse
-Cette application web a été développé à l'aide de la librairie [Streamlit](https://streamlit.io/) et est actuellement hebergée sur leur serveur. [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://commitments-of-traders.streamlitapp.com/)
+Cette application web a été développé à l'aide de la librairie [Streamlit](https://streamlit.io/) et est actuellement hebergée sur leur serveur. 
+
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://commitments-of-traders.streamlitapp.com/)
 
 L'objectif de cet outil est de faciliter l'analyse des rapports **"Commitments of Traders"** issues du site [cftc.gov](https://www.cftc.gov/).
 
