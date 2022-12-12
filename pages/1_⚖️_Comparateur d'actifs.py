@@ -45,8 +45,28 @@ COMMODITY = [
 ALL_ASSET = CHICAGO + DJ + USD + NEW_YORK + COMMODITY
 
 def main():
-    st.header("Tableaux de données par actifs")
+    st.header("Comparateur d'actifs financiers")
     
+    st.markdown(
+            """
+            Le comparateur d'actifs permet d'identifier le flux d'ordres à l'achat et à la vente d'un actif donné puis le comparer à celui d'un autre actif.
+            
+            Les tableaux représentent tous les rapports COT hebdomadaires publiés depuis plusieurs mois.
+            Ainsi, deux actifs corrélés négativement démontrent que la paire d'actifs tend vers un Orderflow important.
+            """ 
+        )
+    col1, col2 = st.columns(2)
+    with col1:
+        with st.expander("Voir exemple"):
+            st.markdown(
+                """
+                - Le nombre d'**achat** sur EUR ne cesse d'**augmenter**.
+                - Le nombre de **vente** sur USD ne cesse d'**augmenter**. 
+                
+                **Conclusion**: Un plan d'achat sur la paire de devise EUR/USD est à privilégier.
+            """ 
+            )
+
     df = csv_to_dataframe("csv_folder/forex/usd.csv")
     dates = list(df.index)
 
