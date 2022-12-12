@@ -1,4 +1,5 @@
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://commitments-of-traders.streamlitapp.com/)
+**+1200 utilisateurs uniques** [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://commitments-of-traders.streamlitapp.com/) 
+
 # License
  
 This project is licensed under the [MIT License](https://github.com/Sanji-moku/COT-analysis-app/blob/main/LICENSE).
