@@ -182,16 +182,17 @@ def get_request_url(url):
 
 def main():
     if RUN:
-        init_csv_files_from_html(date(2022,1,4), 48)
+        init_csv_files_from_html(date(2022,1,4), 56)
         #create_every_url(date(2021,1,5), 92)
         #parser('cot.html', date(2021,9,6))
         #for m in major_fx:
         #    print(m)
         
 
-    
-    #for url in create_every_url(date(2022,1,4), 41):
-    #    print(url)
+    #Update local, change 2nd is week number after 01-04-2022
+    #Help with https://www.cftc.gov/MarketReports/CommitmentsofTraders/HistoricalViewable/index.htm
+    #for url in create_every_url(date(2022,1,4), 56):
+    #   print(url)
     
 if __name__ == "__main__":
     main()
