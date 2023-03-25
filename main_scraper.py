@@ -18,7 +18,7 @@ Attention, deux éléments changent dans l'URL en fonction du fichier : L'année
 
 #Currencies by report
 
-RUN = True
+RUN = False
 CHICAGO = [
             ['EUR','Code-099741','deacmesf','forex',[]], #Asset , Code, End_url, Type(folder), List of value
             ['JPY','Code-097741','deacmesf','forex',[]],
@@ -182,7 +182,7 @@ def get_request_url(url):
 
 def main():
     if RUN:
-        init_csv_files_from_html(date(2022,1,4), 62)
+        init_csv_files_from_html(date(2022,1,4), 64)
         #create_every_url(date(2021,1,5), 92)
         #parser('cot.html', date(2021,9,6))
         #for m in major_fx:
@@ -191,7 +191,7 @@ def main():
 
     #Update local, change 2nd is week number after 01-04-2022
     #Help with https://www.cftc.gov/MarketReports/CommitmentsofTraders/HistoricalViewable/index.htm
-    #for url in create_every_url(date(2022,1,4), 62):
+    #for url in create_every_url(date(2022,1,4), 64):
     #  print(url)
     
 if __name__ == "__main__":
