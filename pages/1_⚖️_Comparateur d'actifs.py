@@ -71,7 +71,7 @@ def main():
     dates = list(df.index)
 
     #Check for new COT report
-    #check_last_row(dates[0])
+    check_last_row(dates[0])
     
     #Input slider pour filter la date range
     start = st.select_slider("Sélectionner la date de début", options = dates, value=("19/07/22"))
