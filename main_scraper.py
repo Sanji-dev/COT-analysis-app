@@ -72,7 +72,7 @@ def init_csv_files_from_html(start_date, weeks_numbers):
     for url in tqdm(url_set):
         parser(url[1],url[0]) #parser(https://.... , 2022-xx-xx)
         
-        sleep(randint(1,3))
+        sleep(randint(1,2))
 
 
     for asset in ALL_ASSET:
@@ -182,7 +182,7 @@ def get_request_url(url):
 
 def main():
     if RUN:
-        init_csv_files_from_html(date(2022,1,4), 64)
+        init_csv_files_from_html(date(2022,1,4), 68)
         #create_every_url(date(2021,1,5), 92)
         #parser('cot.html', date(2021,9,6))
         #for m in major_fx:
